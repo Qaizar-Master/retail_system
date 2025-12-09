@@ -1,0 +1,143 @@
+// 1. Database Configuration
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")   // Connection pooler
+  directUrl = env("DIRECT_URL")     // Direct connection (Required for Supabase)
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --- Enums (Strict options for statuses) ---
+enum Role {
+  USER
+  ADMIN
+}
+
+enum LoyaltyTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum OrderStatus {
+  PENDING     // In cart/checkout
+  PAID        // Payment successful
+  SHIPPED     // Fulfillment Agent triggered
+  DELIVERED
+  RETURNED    // Post-Purchase Agent triggered
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+// --- 1. User & Loyalty Profile ---
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  fullName      String
+  phone         String?
+  
+  // FIXED: Added the role field here
+  role          Role         @default(USER)
+
+  // Loyalty Agent Data
+  loyaltyPoints Int          @default(0)
+  tier          LoyaltyTier  @default(BRONZE)
+  
+  // Relationships
+  orders        Order[]
+  chats         ChatSession[]
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+// --- 2. Product Catalog ---
+model Product {
+  id          String   @id @default(uuid())
+  sku         String   @unique  // e.g., "NIKE-AIR-RED-10"
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  category    String   // e.g., "Footwear", "Apparel"
+  imageUrl    String?
+
+  // Relationships
+  inventory   Inventory[]
+  orderItems  OrderItem[]
+  
+  createdAt   DateTime @default(now())
+}
+
+// --- 3. Inventory Agent Data ---
+// Separated from Product because one item exists in many stores
+model Inventory {
+  id          String   @id @default(uuid())
+  productId   String
+  location    String   // e.g., "Warehouse_Main", "Store_Connaught_Place"
+  quantity    Int      @default(0)
+  aisle       String?  // e.g., "Row 4, Shelf B" (For in-store navigation)
+
+  product     Product  @relation(fields: [productId], references: [id])
+
+  @@unique([productId, location]) // Prevent duplicate entries for same item in same store
+}
+
+// --- 4. Order & Payment Processing ---
+model Order {
+  id            String        @id @default(uuid())
+  userId        String
+  totalAmount   Decimal       @db.Decimal(10, 2)
+  
+  // Status Tracking
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentId     String?       // Transaction ID from Payment Gateway
+  
+  // Fulfillment Info
+  deliveryAddress String?     // If Null, assume Store Pickup
+  pickupStore     String?     // If populated, it is "Click & Collect"
+
+  // Relationships
+  user          User          @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+// Link table between Orders and Products
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2) // Price at the moment of purchase
+
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+// --- 5. Context Switching (Memory) ---
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  
+  // Stores the entire conversation history as a JSON object
+  messages  Json     
+  
+  device    String?  // e.g., "Mobile", "Kiosk"
+  summary   String?  // Optional: AI-generated summary of intent
+
+  user      User     @relation(fields: [userId], references: [id])
+  
+  updatedAt DateTime @updatedAt
+}

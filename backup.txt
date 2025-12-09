@@ -2,12 +2,6 @@
 
 import { useState } from 'react';
 import { ChatInterface } from '@/components/chat';
-import { Bot, SquarePlay, User } from 'lucide-react';
-import { FaRobot } from "react-icons/fa";
-import { TbBrain, TbGift } from "react-icons/tb";
-import { MdCalendarToday, MdOutlineLocationOn, MdOutlineTrendingUp } from "react-icons/md";
-import { RiArrowGoBackLine, RiArrowRightSLine, RiBankCardLine, RiChatSmileAiLine, RiCustomerService2Fill, RiGiftLine, RiHeadphoneLine, RiLightbulbLine, RiNotificationLine, RiRouteFill, RiSecurePaymentLine, RiSmartphoneLine, RiStarLine, RiStore3Line, RiStoreLine, RiTimeLine, RiTruckLine, RiUserHeartLine } from "react-icons/ri";
-import Image from 'next/image';
 
 const HomePage = () => {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
@@ -33,7 +27,7 @@ const HomePage = () => {
       name: "Sales Agent",
       role: "Main Controller",
       color: "from-purple-500 to-purple-600",
-      icon: <RiCustomerService2Fill />,
+      icon: "ri-customer-service-2-line",
       responsibilities: [
         "Greets customer and collects intent",
         "Manages entire conversation",
@@ -45,7 +39,7 @@ const HomePage = () => {
       name: "Recommendation Agent",
       role: "Product Suggestions",
       color: "from-orange-500 to-orange-600",
-      icon: <RiLightbulbLine />,
+      icon: "ri-lightbulb-line",
       responsibilities: [
         "Reads customer profile",
         "Uses browsing & purchase history",
@@ -57,7 +51,7 @@ const HomePage = () => {
       name: "Inventory Agent",
       role: "Stock & Delivery Options",
       color: "from-green-500 to-green-600",
-      icon: <RiStore3Line />,
+      icon: "ri-store-3-line",
       responsibilities: [
         "Checks stock in-store + warehouse",
         "Shows availability options",
@@ -69,7 +63,7 @@ const HomePage = () => {
       name: "Payment Agent",
       role: "Billing, Coupons, Loyalty",
       color: "from-blue-500 to-blue-600",
-      icon: <RiSecurePaymentLine />,
+      icon: "ri-secure-payment-line",
       responsibilities: [
         "Shows total price + discounts",
         "Applies loyalty points & coupons",
@@ -81,7 +75,7 @@ const HomePage = () => {
       name: "Fulfillment Agent",
       role: "Delivery / Pickup Scheduling",
       color: "from-teal-500 to-teal-600",
-      icon: <RiTruckLine />,
+      icon: "ri-truck-line",
       responsibilities: [
         "Schedules pickup or delivery",
         "Reserves item in-store",
@@ -93,13 +87,52 @@ const HomePage = () => {
       name: "Post-Purchase Support Agent",
       role: "Returns, Tracking, Feedback",
       color: "from-pink-500 to-pink-600",
-      icon: <RiHeadphoneLine />,
+      icon: "ri-headphone-line",
       responsibilities: [
         "Track orders",
         "Handle returns/exchanges",
         "Collect customer feedback",
         "Provide ongoing support"
       ]
+    }
+  ];
+
+  const journeySteps = [
+    {
+      title: "Welcome Screen",
+      agent: "Sales Agent",
+      description: "Customer greeted with personalized welcome message and intent collection",
+      screen: "Welcome interface with voice/touch options"
+    },
+    {
+      title: "Product Suggestions",
+      agent: "Recommendation Agent",
+      description: "AI-powered recommendations based on customer profile and preferences",
+      screen: "Personalized product carousel with smart suggestions"
+    },
+    {
+      title: "Check Availability",
+      agent: "Inventory Agent",
+      description: "Real-time stock verification across store and warehouse locations",
+      screen: "Availability status with pickup/delivery options"
+    },
+    {
+      title: "Checkout Payment",
+      agent: "Payment Agent",
+      description: "Secure payment processing with multiple payment methods",
+      screen: "Payment interface with loyalty points and discounts"
+    },
+    {
+      title: "Order Confirmation",
+      agent: "Fulfillment Agent",
+      description: "Delivery scheduling and order confirmation with staff notification",
+      screen: "Confirmation screen with delivery slot selection"
+    },
+    {
+      title: "Track/Return",
+      agent: "Post-Purchase Agent",
+      description: "Order tracking, return processing, and customer feedback collection",
+      screen: "Support dashboard with tracking and return options"
     }
   ];
 
@@ -119,7 +152,7 @@ const HomePage = () => {
           <div className="mb-8">
             <div className="inline-flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
               <i className="ri-robot-2-line text-2xl text-purple-300"></i>
-              <span className="text-lg font-semibold inline-flex"><FaRobot className='w-6 h-6 text-purple-300 mr-2' />Multi-Agent System</span>
+              <span className="text-lg font-semibold">Multi-Agent System</span>
             </div>
             <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
               In-Store Kiosk
@@ -137,7 +170,8 @@ const HomePage = () => {
               onClick={openDemo}
               className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl whitespace-nowrap"
             >
-              Start Chat
+              <i className="ri-play-circle-line mr-2"></i>
+              View Demo
             </button>
             <button
               onClick={() => scrollToSection('agents-overview')}
@@ -169,7 +203,7 @@ const HomePage = () => {
               {/* Customer at top */}
               <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full text-white text-2xl mb-4">
-                  <User />
+                  <i className="ri-user-line"></i>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Customer</h3>
               </div>
@@ -190,7 +224,7 @@ const HomePage = () => {
                     >
                       <div className="flex items-start space-x-4">
                         <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${agent.color} flex items-center justify-center text-white text-xl flex-shrink-0`}>
-                          {agent.icon}
+                          <i className={agent.icon}></i>
                         </div>
                         <div className="flex-1">
                           <h3 className="text-xl font-bold text-gray-900 mb-1">{agent.name}</h3>
@@ -237,7 +271,7 @@ const HomePage = () => {
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <RiChatSmileAiLine />
+                    <i className="ri-chat-smile-3-line text-purple-600"></i>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Intelligent Greeting</h3>
@@ -247,7 +281,7 @@ const HomePage = () => {
 
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <RiRouteFill />
+                    <i className="ri-route-line text-purple-600"></i>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Smart Routing</h3>
@@ -257,7 +291,7 @@ const HomePage = () => {
 
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <TbBrain />
+                    <i className="ri-brain-line text-purple-600"></i>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Session Management</h3>
@@ -272,7 +306,7 @@ const HomePage = () => {
                 <div className="bg-white rounded-xl shadow-lg p-6">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white">
-                      <RiCustomerService2Fill />
+                      <i className="ri-customer-service-2-line"></i>
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Kiosk Interface</h4>
@@ -309,12 +343,12 @@ const HomePage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <Image src="/nikeairmax.png" alt="nikeairmax" height={100} width={200}/>
+                      <div className="w-full h-24 bg-gradient-to-br from-blue-200 to-blue-300 rounded-lg mb-3"></div>
                       <h5 className="font-medium text-sm text-gray-900">Nike Air Max</h5>
                       <p className="text-xs text-gray-500">$129.99</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <Image src="/image.png" alt="adidasboost" height={100} width={175}/>
+                      <div className="w-full h-24 bg-gradient-to-br from-green-200 to-green-300 rounded-lg mb-3"></div>
                       <h5 className="font-medium text-sm text-gray-900">Adidas Boost</h5>
                       <p className="text-xs text-gray-500">$149.99</p>
                     </div>
@@ -342,7 +376,7 @@ const HomePage = () => {
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <RiUserHeartLine />
+                    <i className="ri-user-heart-line text-orange-600"></i>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Customer Profiling</h3>
@@ -352,7 +386,7 @@ const HomePage = () => {
 
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MdOutlineTrendingUp />
+                    <i className="ri-trending-up-line text-orange-600"></i>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Trend Analysis</h3>
@@ -362,7 +396,7 @@ const HomePage = () => {
 
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <TbGift />
+                    <i className="ri-gift-line text-orange-600"></i>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Bundle Suggestions</h3>
@@ -390,7 +424,7 @@ const HomePage = () => {
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center text-white">
-                  <RiStore3Line />
+                  <i className="ri-store-3-line"></i>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Inventory Agent</h3>
@@ -406,15 +440,15 @@ const HomePage = () => {
                   </div>
                   <div className="text-sm text-gray-600 space-y-1">
                     <div className="flex items-center">
-                      <RiStoreLine className="mr-2 text-green-500" />
+                      <i className="ri-store-line mr-2 text-green-500"></i>
                       Available here (3 units)
                     </div>
                     <div className="flex items-center">
-                      <RiTimeLine className="mr-2 text-blue-500" />
+                      <i className="ri-time-line mr-2 text-blue-500"></i>
                       Pick up in 2 hours
                     </div>
                     <div className="flex items-center">
-                      <RiTruckLine className="mr-2 text-purple-500" />
+                      <i className="ri-truck-line mr-2 text-purple-500"></i>
                       Ship to home (1-2 days)
                     </div>
                   </div>
@@ -441,7 +475,7 @@ const HomePage = () => {
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white">
-                  <RiSecurePaymentLine />
+                  <i className="ri-secure-payment-line"></i>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Payment Agent</h3>
@@ -466,16 +500,16 @@ const HomePage = () => {
                 </div>
 
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50 flex-col">
-                    <RiSmartphoneLine className='flex items-center justify-center'/>
+                  <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
+                    <i className="ri-smartphone-line mb-1 block"></i>
                     UPI
                   </button>
                   <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
-                    <RiBankCardLine />
+                    <i className="ri-bank-card-line mb-1 block"></i>
                     Card
                   </button>
                   <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
-                    <RiGiftLine />
+                    <i className="ri-gift-line mb-1 block"></i>
                     Gift Card
                   </button>
                 </div>
@@ -515,7 +549,7 @@ const HomePage = () => {
             <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-8">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center text-white">
-                  <RiTruckLine />
+                  <i className="ri-truck-line"></i>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Fulfillment Agent</h3>
@@ -533,15 +567,15 @@ const HomePage = () => {
 
                   <div className="text-sm space-y-2">
                     <div className="flex items-center">
-                      <MdCalendarToday className="mr-2 text-teal-500"/>
+                      <i className="ri-calendar-line mr-2 text-teal-500"></i>
                       <span>Pickup: Tomorrow 2:00 PM</span>
                     </div>
                     <div className="flex items-center">
-                      <MdOutlineLocationOn className="mr-2 text-teal-500"/>
+                      <i className="ri-map-pin-line mr-2 text-teal-500"></i>
                       <span>Store Location: Main Street</span>
                     </div>
                     <div className="flex items-center">
-                      <RiNotificationLine className="mr-2 text-teal-500"/>
+                      <i className="ri-notification-line mr-2 text-teal-500"></i>
                       <span>Staff notified</span>
                     </div>
                   </div>
@@ -568,7 +602,7 @@ const HomePage = () => {
             <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center text-white">
-                  <RiHeadphoneLine/>
+                  <i className="ri-headphone-line"></i>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Support Agent</h3>
@@ -582,30 +616,30 @@ const HomePage = () => {
                   <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <RiTruckLine className="mr-3 text-pink-500"/>
+                        <i className="ri-truck-line mr-3 text-pink-500"></i>
                         <span className="font-medium">Track Order</span>
                       </div>
-                      <RiArrowRightSLine className="text-gray-400"/>
+                      <i className="ri-arrow-right-s-line text-gray-400"></i>
                     </div>
                   </button>
 
                   <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <RiArrowGoBackLine className="mr-3 text-pink-500"/>
+                        <i className="ri-arrow-go-back-line mr-3 text-pink-500"></i>
                         <span className="font-medium">Start Return</span>
                       </div>
-                      <RiArrowRightSLine className="text-gray-400"/>
+                      <i className="ri-arrow-right-s-line text-gray-400"></i>
                     </div>
                   </button>
 
                   <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <RiStarLine className="mr-3 text-pink-500"/>
+                        <i className="ri-star-line mr-3 text-pink-500"></i>
                         <span className="font-medium">Leave Feedback</span>
                       </div>
-                      <RiArrowRightSLine className="text-gray-400"/>
+                      <i className="ri-arrow-right-s-line text-gray-400"></i>
                     </div>
                   </button>
                 </div>
@@ -629,6 +663,162 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Customer Journey Section */}
+      <section id="journey" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-2 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold mb-4">
+              CUSTOMER EXPERIENCE
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Complete Customer Journey</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              From discovery to delight - see how our multi-agent system creates seamless shopping experiences
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="overflow-x-auto pb-8">
+              <div className="flex space-x-8 min-w-max">
+                {journeySteps.map((step, index) => (
+                  <div key={index} className="flex-shrink-0 w-80">
+                    <div className="relative">
+                      {/* Step number */}
+                      <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg z-10">
+                        {index + 1}
+                      </div>
+
+                      {/* Screen mockup */}
+                      <div className="bg-gray-900 rounded-2xl p-4 shadow-2xl">
+                        <div className="bg-white rounded-xl h-96 p-6 flex flex-col">
+                          <div className="flex items-center space-x-2 mb-4">
+                            <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                          </div>
+
+                          <div className="flex-1 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i className={`${agents[Math.min(index, agents.length - 1)].icon} text-2xl text-purple-600`}></i>
+                              </div>
+                              <h4 className="font-semibold text-gray-900 mb-2">{step.title}</h4>
+                              <p className="text-sm text-gray-600">{step.screen}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step details */}
+                      <div className="mt-6">
+                        <div className="inline-block px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-medium mb-2">
+                          {step.agent}
+                        </div>
+                        <h3 className="font-bold text-gray-900 mb-2">{step.title}</h3>
+                        <p className="text-sm text-gray-600">{step.description}</p>
+                      </div>
+                    </div>
+
+                    {/* Arrow connector */}
+                    {index < journeySteps.length - 1 && (
+                      <div className="absolute top-48 -right-4 w-8 h-8 flex items-center justify-center">
+                        <i className="ri-arrow-right-line text-2xl text-purple-400"></i>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Ready to Transform Your Retail Experience?
+          </h2>
+          <p className="text-xl text-purple-100 mb-12">
+            Deploy intelligent kiosk systems powered by multi-agent AI and revolutionize customer interactions
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => scrollToSection('journey')}
+              className="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-xl transition-all transform hover:scale-105 whitespace-nowrap cursor-pointer"
+            >
+              Schedule Demo →
+            </button>
+            <button className="border-2 border-white/30 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/10 transition-all whitespace-nowrap">
+              View Documentation
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-4 gap-8 mb-12">
+            <div className="lg:col-span-2">
+              <div className="flex items-center space-x-3 mb-6">
+                <img
+                  src="https://public.readdy.ai/ai/img_res/2cc70c8b-89e4-498a-94a8-b6de33f37731.png"
+                  alt="KioskAI"
+                  className="w-10 h-10 object-contain"
+                />
+                <span className="text-2xl font-bold">KioskAI</span>
+              </div>
+              <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
+                Revolutionizing retail experiences through intelligent multi-agent systems that deliver personalized, real-time customer assistance at every touchpoint.
+              </p>
+              <div className="flex space-x-4">
+                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                  <i className="ri-linkedin-line"></i>
+                </a>
+                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                  <i className="ri-twitter-line"></i>
+                </a>
+                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                  <i className="ri-github-line"></i>
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Product</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Integration</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Resources</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Case Studies</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              © 2024 KioskAI. All rights reserved.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+              <a href="https://readdy.ai/?origin=logo" className="text-gray-400 hover:text-white text-sm transition-colors">Powered by Readdy</a>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Agent Demo Modal */}
       {isDemoOpen && (
@@ -656,3 +846,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
