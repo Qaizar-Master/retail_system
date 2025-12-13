@@ -218,7 +218,7 @@ export default function ChatInterface() {
                 </div>
             </div>
 
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col min-w-0">
                 <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className={cn("w-2 h-2 rounded-full animate-pulse", connected ? "bg-green-500" : "bg-red-500")}></div>
@@ -260,9 +260,9 @@ export default function ChatInterface() {
                             </div>
                             {
                                 msg.products && msg.products.length > 0 && (
-                                    <div className="flex gap-4 ml-10 mb-2 overflow-x-auto pb-2">
+                                    <div className="flex gap-4 ml-10 mb-2 overflow-x-auto pb-4 max-w-full px-1 scroll-smooth snap-x snap-mandatory">
                                         {msg.products.map((prod) => (
-                                            <div key={prod.id} className="flex-shrink-0 w-40 border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden bg-white dark:bg-zinc-800 p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                            <div key={prod.id} className="snap-center flex-shrink-0 w-40 border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden bg-white dark:bg-zinc-800 p-2 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-blue-400 group"
                                                 onClick={() => {
                                                     // Optional: clicking product could trigger context update or "buy this"
                                                     setSelectedProduct(prod);
@@ -329,6 +329,8 @@ export default function ChatInterface() {
                                                         setSelectedPaymentMethod(opt as "UPI" | "Card");
                                                         setIsPaymentSuccessful(false);
                                                         setPaymentModalOpen(true);
+                                                    } else {
+                                                        sendMessage(opt);
                                                     }
                                                 }}
                                             >

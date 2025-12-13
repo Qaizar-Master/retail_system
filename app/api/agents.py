@@ -15,16 +15,82 @@ class RecommendationAgent(Agent):
     async def process(self, input_text: str, context: Dict[str, Any]) -> Dict[str, Any]:
         products = await db.get_products()
         input_lower = input_text.lower()
+        print(f"DEBUG_TRACE: Start Process. Input='{input_text}' Context={context}", flush=True)
         
+        # 0. Gender Context Management
+        gender_filter = context.get("gender_filter")
+        
+        # Check if user is answering the clarification question
+        # Use regex for whole word match
+        if re.search(r"\b(men|man|male|for men)\b", input_lower):
+            gender_filter = "Men"
+            context["gender_filter"] = "Men"
+        elif re.search(r"\b(women|woman|female|for women)\b", input_lower):
+            gender_filter = "Women"
+            context["gender_filter"] = "Women"
+            
+        print(f"DEBUG_TRACE: After Gender Check. GenderFilter='{gender_filter}'")
+            
+        # Check for broad intent necessitating clarification
+        broad_terms = ["casual wear", "casual", "clothes", "outfit", "wear"]
+        is_broad = any(term in input_lower for term in broad_terms)
+        
+        if is_broad and not gender_filter:
+             # Check if specific gender is already in query (e.g., "casual wear for men")
+             # Use regex for whole word match to avoid matching "recommend" -> "men"
+             is_men = re.search(r"\b(men|man|male|for men)\b", input_lower)
+             is_women = re.search(r"\b(women|woman|female|for women)\b", input_lower)
+             
+             if is_men:
+                 gender_filter = "Men"
+                 context["gender_filter"] = "Men"
+             elif is_women:
+                 gender_filter = "Women"
+                 context["gender_filter"] = "Women"
+             else:
+                 # Store the original broad query to use it after gender is selected
+                 context["pending_query"] = input_text
+                 return {
+                     "content": "To help you better, who are you shopping for?",
+                     "options": ["Men", "Women"]
+                 }
+        
+        # Filter products by gender if set (and if product has gender attribute)
+        if gender_filter:
+            # We match "Unisex" for everyone, plus the specific gender
+            products = [p for p in products if not p.gender or p.gender == "Unisex" or p.gender == gender_filter]
+        
+        # Determine the text to search with
+        # If we just resolved a gender from a pending query, use the original query
+        search_text = input_text
+        if context.get("pending_query"):
+             # Only use pending query if the current input was just a gender selection
+             # (Simple heuristic: if we just set gender_filter in this turn)
+             # Actually, simpler: if pending_query exists and we have a gender filter now, use pending.
+             if gender_filter:
+                 search_text = context.pop("pending_query")
+                 input_lower = search_text.lower()
+        
+        print(f"DEBUG_TRACE: SearchText='{search_text}' PendingQueryRestored={bool(context.get('pending_query') is None)}")
+        
+        # Determine if this is a broad search (re-check search_text)
+        broad_terms = ["casual wear", "casual", "clothes", "outfit", "wear", "shoes", "footwear", "sneakers"]
+        is_broad_search = any(term in search_text.lower() for term in broad_terms)
+        print(f"DEBUG: search_text='{search_text}', is_broad={is_broad_search}, gender={gender_filter}")
+
+        # 1. Fuzzy match product names
+
         # 1. Fuzzy match product names
         product_names = [p.name for p in products]
         # 1. Fuzzy match Name
         # Logic: WRatio is best overall, but "runing shos" scored 57. 
         # We lower threshold to 55, but prioritize high scores > 70.
-        best_name_match = process.extractOne(input_text, product_names, scorer=fuzz.WRatio)
+        best_name_match = process.extractOne(search_text, product_names, scorer=fuzz.WRatio)
         
         matches = []
-        if best_name_match:
+        # FAILSAFE: If broad search, DO NOT accept a single fuzzy match on name. 
+        # We want multiple items via keyword/category logic.
+        if best_name_match and not is_broad_search:
             score = best_name_match[1]
             # High confidence match
             if score > 70:
@@ -32,7 +98,7 @@ class RecommendationAgent(Agent):
             # Moderate confidence (typos), confirm with partial_ratio to be safe
             elif score > 55:
                 # Secondary check: does it have strong partial overlap?
-                part_score = fuzz.partial_ratio(input_text, best_name_match[0])
+                part_score = fuzz.partial_ratio(search_text, best_name_match[0])
                 if part_score > 60:
                      matches = [p for p in products if p.name == best_name_match[0]]
             
@@ -49,7 +115,7 @@ class RecommendationAgent(Agent):
             
             # Direct category match
             if not matches:
-                best_cat_match = process.extractOne(input_text, categories, scorer=fuzz.WRatio)
+                best_cat_match = process.extractOne(search_text, categories, scorer=fuzz.WRatio)
                 if best_cat_match and best_cat_match[1] > 60:
                      matches = [p for p in products if p.category == best_cat_match[0]]
         
@@ -61,7 +127,7 @@ class RecommendationAgent(Agent):
                 if "shoes" in keywords or "footwear" in keywords:
                     keywords.extend(["sneakers", "running", "kicks"])
                 if "apparel" in keywords:
-                    keywords.extend(["clothing", "wear", "dress", "shirt", "jeans"])
+                    keywords.extend(["clothing", "wear", "dress", "shirt", "jeans", "casual"])
                 
                 # Check if any keyword appears in input
                 if any(k in input_lower for k in keywords):
@@ -79,7 +145,37 @@ class RecommendationAgent(Agent):
                 matches = [p for p in products if "Footwear" in p.category]
              elif "phone" in input_lower:
                 matches = [p for p in products if "Electronics" in p.category]
+             # NEW: Fallback if we have a gender filter but no specific matches -> Show top gender items
+             elif gender_filter:
+                print(f"DEBUG_TRACE: Hitting Gender Fallback. ProductsAvailable={len(products)}", flush=True)
+                matches = products # Return all valid products for this gender
+                
+                # Refinement: If we have a pending query, try to filter the fallback list
+                # This prevents "casual wear" -> "Electronics"
+                fallback_query = context.get("pending_query", "").lower()
+                if fallback_query:
+                     print(f"DEBUG_TRACE: Filtering Fallback with '{fallback_query}'", flush=True)
+                     # Simple keyword check first
+                     filtered = []
+                     for p in matches:
+                         # Mapping for safety
+                         searchable_text = (p.name + " " + p.category).lower()
+                         if "apparel" in searchable_text: searchable_text += " casual wear clothing"
+                         if "footwear" in searchable_text: searchable_text += " shoes sneakers"
+                         
+                         # Check if any broad term from query is in product text
+                         query_terms = fallback_query.split()
+                         if any(term in searchable_text for term in query_terms if len(term) > 3):
+                             filtered.append(p)
+                     
+                     if filtered:
+                         print(f"DEBUG_TRACE: Fallback filtered from {len(matches)} to {len(filtered)} items", flush=True)
+                         matches = filtered
+                     else:
+                         print("DEBUG_TRACE: Fallback filtering yielded 0 items, keeping original list", flush=True)
+
              else:
+                print("DEBUG_TRACE: No matches and no fallback. Returning help message.", flush=True)
                 return {"content": "I can help you find products. Try asking for 'running shoes' or 'red dress'."}
 
         if not matches:
@@ -90,10 +186,17 @@ class RecommendationAgent(Agent):
         context["last_product_name"] = matches[0].name
         
         response = "Here are some top picks:"
+        # Add context about gender if applicable
+        if gender_filter:
+            response = f"Here are some top picks for {gender_filter}:"
+
         product_data = []
-        for p in matches[:3]:
+        product_data = []
+        for p in matches[:10]:
             product_data.append(p.dict())
-            response += f"\n- {p.name} (₹{p.price})"
+            response += f"\n- {p.name} (INR {p.price})"
+        
+        print(f"DEBUG: Returning {len(product_data)} matches", flush=True)
             
         return {
             "content": response,

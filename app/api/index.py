@@ -40,6 +40,7 @@ def health_check():
 @app.websocket("/ws/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    session_context = {}  # Persistent context for this connection
     try:
         while True:
             data = await websocket.receive_text()
@@ -50,9 +51,12 @@ async def websocket_endpoint(websocket: WebSocket):
                 user_content = payload["data"]["content"]
                 print(f"Processing message: {user_content}")
                 
+                # Merge incoming data into persistent context
+                session_context.update(payload.get("data", {}))
+                
                 try:
                     # In a real LLM setting, this would be streaming tokens
-                    response_payload = await sales_agent.process(user_content, payload["data"])
+                    response_payload = await sales_agent.process(user_content, session_context)
                     print(f"Generated response: {response_payload}")
 
                     response_text = response_payload.get("content", "")

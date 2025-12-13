@@ -122,12 +122,12 @@ const HomePage = () => {
               <span className="text-lg font-semibold inline-flex"><FaRobot className='w-6 h-6 text-purple-300 mr-2' />Multi-Agent System</span>
             </div>
             <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
-              In-Store Kiosk
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                Intelligence
+              Smart Retail
+              <span className="block text-transparent bg-clip-text bg-blue-500">
+                AI
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed ">
+            <p className="text-xl md:text-2xl text-gray-100 mb-8 max-w-3xl mx-auto leading-relaxed ">
               Delivering Personalized, Real-Time Retail Assistance Through Advanced AI Agents
             </p>
           </div>
@@ -465,18 +465,12 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2">
-                  <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50 flex-col">
-                    <RiSmartphoneLine className='flex items-center justify-center' />
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
                     UPI
                   </button>
                   <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
-                    <RiBankCardLine />
                     Card
-                  </button>
-                  <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
-                    <RiGiftLine />
-                    Gift Card
                   </button>
                 </div>
               </div>

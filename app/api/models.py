@@ -16,6 +16,7 @@ class Product(BaseModel):
     description: str
     price: float
     category: str
+    gender: Optional[str] = None
     imageUrl: Optional[str] = None
     inStock: bool = True
 
