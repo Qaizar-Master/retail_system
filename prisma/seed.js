@@ -49,17 +49,17 @@ async function main() {
 
         // 3. Add Inventory
         if (p.sku === 'DRS-RED-001') {
-            await prisma.inventory.createMany({
-                data: [
-                    { productId: product.id, location: 'Mall of India', quantity: 5, aisle: 'Row 3' },
-                    { productId: product.id, location: 'Main Warehouse', quantity: 0, aisle: 'Zone B' },
-                ],
-                skipDuplicates: true,
-            })
+            await Promise.all([
+                prisma.inventory.create({
+                    data: { productId: product.id, location: 'Mall of India', quantity: 5, aisle: 'Row 3' }
+                }),
+                prisma.inventory.create({
+                    data: { productId: product.id, location: 'Main Warehouse', quantity: 0, aisle: 'Zone B' }
+                })
+            ])
         } else {
-            await prisma.inventory.createMany({
-                data: [{ productId: product.id, location: 'Main Warehouse', quantity: 10, aisle: 'Zone A' }],
-                skipDuplicates: true,
+            await prisma.inventory.create({
+                data: { productId: product.id, location: 'Main Warehouse', quantity: 10, aisle: 'Zone A' }
             })
         }
     }

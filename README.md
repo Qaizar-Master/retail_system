@@ -14,6 +14,23 @@ pnpm dev
 bun dev
 ```
 
+## Backend Setup
+
+1. Install Python 3.10+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Start the backend:
+   ```bash
+   start_backend.bat
+   ```
+   Or manually:
+   ```bash
+   uvicorn app.api.index:app --reload --port 8000
+   ```
+
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
@@ -28,6 +45,31 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Chat Commands
+
+The chatbot supports the following types of queries:
+
+### Recommendations
+Ask for products by category or name.
+- "Recommend me some shoes"
+- "I need a red dress"
+- "Show me jeans"
+
+### Inventory Checks
+Check stock for specific items.
+- "Is the SmartPhone Z in stock?"
+- "Do you have the Classic Denim Shirt?"
+- "Check stock for Runner Pro Shoes"
+
+### Shopping & Checkout
+- "I want to buy this"
+- "Proceed to checkout"
+- "Pay for my order"
+
+### Fulfillment
+- "When will my order ship?"
+- "Can I pickup at the store?"
 
 ## Deploy on Vercel
 

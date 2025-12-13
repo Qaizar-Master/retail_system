@@ -1,42 +1,13 @@
-// 1. Database Configuration
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")   // Connection pooler
-  directUrl = env("DIRECT_URL")     // Direct connection (Required for Supabase)
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-// --- Enums (Strict options for statuses) ---
-enum Role {
-  USER
-  ADMIN
-}
-
-enum LoyaltyTier {
-  BRONZE
-  SILVER
-  GOLD
-  PLATINUM
-}
-
-enum OrderStatus {
-  PENDING     // In cart/checkout
-  PAID        // Payment successful
-  SHIPPED     // Fulfillment Agent triggered
-  DELIVERED
-  RETURNED    // Post-Purchase Agent triggered
-  CANCELLED
-}
-
-enum PaymentStatus {
-  PENDING
-  SUCCESS
-  FAILED
-  REFUNDED
-}
+// --- Enums removed for SQLite compatibility ---
 
 // --- 1. User & Loyalty Profile ---
 model User {
@@ -46,11 +17,11 @@ model User {
   phone         String?
   
   // FIXED: Added the role field here
-  role          Role         @default(USER)
+  role          String       @default("USER")
 
   // Loyalty Agent Data
   loyaltyPoints Int          @default(0)
-  tier          LoyaltyTier  @default(BRONZE)
+  tier          String       @default("BRONZE")
   
   // Relationships
   orders        Order[]
@@ -66,7 +37,7 @@ model Product {
   sku         String   @unique  // e.g., "NIKE-AIR-RED-10"
   name        String
   description String?
-  price       Decimal  @db.Decimal(10, 2)
+  price       Decimal
   category    String   // e.g., "Footwear", "Apparel"
   imageUrl    String?
 
@@ -95,11 +66,11 @@ model Inventory {
 model Order {
   id            String        @id @default(uuid())
   userId        String
-  totalAmount   Decimal       @db.Decimal(10, 2)
+  totalAmount   Decimal
   
   // Status Tracking
-  status        OrderStatus   @default(PENDING)
-  paymentStatus PaymentStatus @default(PENDING)
+  status        String        @default("PENDING")
+  paymentStatus String        @default("PENDING")
   paymentId     String?       // Transaction ID from Payment Gateway
   
   // Fulfillment Info
@@ -120,7 +91,7 @@ model OrderItem {
   orderId   String
   productId String
   quantity  Int
-  price     Decimal @db.Decimal(10, 2) // Price at the moment of purchase
+  price     Decimal
 
   order     Order   @relation(fields: [orderId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
@@ -132,7 +103,7 @@ model ChatSession {
   userId    String
   
   // Stores the entire conversation history as a JSON object
-  messages  Json     
+  messages  String     
   
   device    String?  // e.g., "Mobile", "Kiosk"
   summary   String?  // Optional: AI-generated summary of intent

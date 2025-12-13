@@ -1,43 +1,44 @@
-import requests
+import asyncio
+import websockets
 import json
-import time
 
-def test_chat():
-    url = "http://localhost:8001/api/chat"
+async def test_chat():
+    uri = "ws://localhost:8000/ws/chat"
     
-    # Test 1: Health check
     try:
-        r = requests.get("http://localhost:8001/api/health")
-        print(f"Health Check: {r.status_code} {r.json()}")
+        async with websockets.connect(uri) as websocket:
+            print(f"Connected to {uri}")
+            
+            # Test Fuzzy Match
+            print("\n--- Testing Fuzzy Match ('runing shos') ---")
+            await websocket.send(json.dumps({
+                "type": "user_message",
+                "data": {"content": "I need runing shos", "channel": "test"}
+            }))
+            
+            while True:
+                resp = json.loads(await websocket.recv())
+                if resp.get("type") == "final":
+                    print(f"Response: {resp['content']}")
+                    break
+
+            # Test Context ("buy it")
+            print("\n--- Testing Context ('buy it') ---")
+            await websocket.send(json.dumps({
+                "type": "user_message",
+                "data": {"content": "buy it", "channel": "test"}
+            }))
+            
+            while True:
+                resp = json.loads(await websocket.recv())
+                if resp.get("type") == "final":
+                    print(f"Response: {resp['content']}")
+                    break
+                    
+    except ConnectionRefusedError:
+        print("Connection failed. Is the backend running on port 8000?")
     except Exception as e:
-        print(f"Health check failed: {e}")
-        return
-
-    # Test 2: Recommendation
-    payload = {
-        "messages": [{"role": "user", "content": "I need running shoes"}],
-        "context": {"channel": "mobile"}
-    }
-    r = requests.post(url, json=payload)
-    print("Test 2 (Recommendation):", r.json()['content'])
-
-    # Test 3: Inventory
-    payload = {
-        "messages": [{"role": "user", "content": "is the red nike in stock?"}],
-        "context": {"channel": "mobile"}
-    }
-    r = requests.post(url, json=payload)
-    print("Test 3 (Inventory):", r.json()['content'])
-
-    # Test 4: Payment mock
-    payload = {
-        "messages": [{"role": "user", "content": "I want to buy it"}],
-        "context": {"channel": "mobile"}
-    }
-    r = requests.post(url, json=payload)
-    print("Test 4 (Payment):", r.json()['content'])
+        print(f"Test failed: {e}")
 
 if __name__ == "__main__":
-    # Wait for server to start
-    time.sleep(2)
-    test_chat()
+    asyncio.run(test_chat())

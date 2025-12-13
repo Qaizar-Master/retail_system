@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react';
-import { ChatInterface } from '@/components/chat';
+import ChatInterface from '@/components/chat';
 import { Bot, SquarePlay, User } from 'lucide-react';
 import { FaRobot } from "react-icons/fa";
 import { TbBrain, TbGift } from "react-icons/tb";
@@ -110,7 +110,7 @@ const HomePage = () => {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://public.readdy.ai/ai/img_res/154973c7f7e94aa59a693294602082ff.jpg')`
+            backgroundImage: `url('/in_store.jpg')`
           }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40"></div>
@@ -127,7 +127,7 @@ const HomePage = () => {
                 Intelligence
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed ">
               Delivering Personalized, Real-Time Retail Assistance Through Advanced AI Agents
             </p>
           </div>
@@ -309,12 +309,12 @@ const HomePage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <Image src="/nikeairmax.png" alt="nikeairmax" height={100} width={200}/>
+                      <Image src="/nikeairmax.png" alt="nikeairmax" height={100} width={200} />
                       <h5 className="font-medium text-sm text-gray-900">Nike Air Max</h5>
                       <p className="text-xs text-gray-500">$129.99</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <Image src="/image.png" alt="adidasboost" height={100} width={175}/>
+                      <Image src="/image.png" alt="adidasboost" height={100} width={175} />
                       <h5 className="font-medium text-sm text-gray-900">Adidas Boost</h5>
                       <p className="text-xs text-gray-500">$149.99</p>
                     </div>
@@ -467,7 +467,7 @@ const HomePage = () => {
 
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50 flex-col">
-                    <RiSmartphoneLine className='flex items-center justify-center'/>
+                    <RiSmartphoneLine className='flex items-center justify-center' />
                     UPI
                   </button>
                   <button className="p-2 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50">
@@ -533,15 +533,15 @@ const HomePage = () => {
 
                   <div className="text-sm space-y-2">
                     <div className="flex items-center">
-                      <MdCalendarToday className="mr-2 text-teal-500"/>
+                      <MdCalendarToday className="mr-2 text-teal-500" />
                       <span>Pickup: Tomorrow 2:00 PM</span>
                     </div>
                     <div className="flex items-center">
-                      <MdOutlineLocationOn className="mr-2 text-teal-500"/>
+                      <MdOutlineLocationOn className="mr-2 text-teal-500" />
                       <span>Store Location: Main Street</span>
                     </div>
                     <div className="flex items-center">
-                      <RiNotificationLine className="mr-2 text-teal-500"/>
+                      <RiNotificationLine className="mr-2 text-teal-500" />
                       <span>Staff notified</span>
                     </div>
                   </div>
@@ -568,7 +568,7 @@ const HomePage = () => {
             <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center text-white">
-                  <RiHeadphoneLine/>
+                  <RiHeadphoneLine />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Support Agent</h3>
@@ -582,30 +582,30 @@ const HomePage = () => {
                   <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <RiTruckLine className="mr-3 text-pink-500"/>
+                        <RiTruckLine className="mr-3 text-pink-500" />
                         <span className="font-medium">Track Order</span>
                       </div>
-                      <RiArrowRightSLine className="text-gray-400"/>
+                      <RiArrowRightSLine className="text-gray-400" />
                     </div>
                   </button>
 
                   <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <RiArrowGoBackLine className="mr-3 text-pink-500"/>
+                        <RiArrowGoBackLine className="mr-3 text-pink-500" />
                         <span className="font-medium">Start Return</span>
                       </div>
-                      <RiArrowRightSLine className="text-gray-400"/>
+                      <RiArrowRightSLine className="text-gray-400" />
                     </div>
                   </button>
 
                   <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <RiStarLine className="mr-3 text-pink-500"/>
+                        <RiStarLine className="mr-3 text-pink-500" />
                         <span className="font-medium">Leave Feedback</span>
                       </div>
-                      <RiArrowRightSLine className="text-gray-400"/>
+                      <RiArrowRightSLine className="text-gray-400" />
                     </div>
                   </button>
                 </div>

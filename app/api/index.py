@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from .models import ChatRequest, Message
 from .agents import SalesAgent
 from .services import db
+import json
+import asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,22 +37,54 @@ sales_agent = SalesAgent()
 def health_check():
     return {"status": "ok"}
 
-@app.post("/api/chat")
-async def chat_endpoint(request: ChatRequest):
+@app.websocket("/ws/chat")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
     try:
-        user_message = request.messages[-1]
-        if user_message.role != "user":
-            raise HTTPException(status_code=400, detail="Last message must be from user")
+        while True:
+            data = await websocket.receive_text()
+            print(f"Received data: {data}")
+            payload = json.loads(data)
             
-        # Await the agent process
-        response_text = await sales_agent.process(user_message.content, request.context)
-        
-        return {
-            "role": "assistant",
-            "content": response_text,
-            "context": request.context
-        }
+            if payload.get("type") == "user_message":
+                user_content = payload["data"]["content"]
+                print(f"Processing message: {user_content}")
+                
+                try:
+                    # In a real LLM setting, this would be streaming tokens
+                    response_payload = await sales_agent.process(user_content, payload["data"])
+                    print(f"Generated response: {response_payload}")
+
+                    response_text = response_payload.get("content", "")
+                    options = response_payload.get("options", [])
+                except Exception as proc_error:
+                    print(f"Error processing message: {proc_error}")
+                    import traceback
+                    traceback.print_exc()
+                    response_text = "I encountered an error processing your request."
+                    options = []
+                
+                # Mock streaming effect
+                chunk_size = 5
+                for i in range(0, len(response_text), chunk_size):
+                    chunk = response_text[i:i+chunk_size]
+                    await websocket.send_json({
+                        "type": "partial",
+                        "chunk": chunk
+                    })
+                    await asyncio.sleep(0.05)
+                
+                # Send final message
+                await websocket.send_json({
+                    "type": "final",
+                    "content": response_text,
+                    "options": options,
+                    "products": response_payload.get("products", []),
+                    "product_context": response_payload.get("product_context"),
+                    "agentName": response_payload.get("agent_name")
+                })
+                
+    except WebSocketDisconnect:
+        print("Client disconnected")
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"WebSocket error: {e}")

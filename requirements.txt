@@ -1,5 +1,7 @@
 fastapi
 uvicorn
 pydantic
-databases[postgresql]
+databases[sqlite]
+aiosqlite
 python-dotenv
+thefuzz[speedup]
