@@ -246,10 +246,32 @@ class PaymentAgent(Agent):
         product_name = context.get("last_product_name", "item")
         
         if "buy" in input_lower or "pay" in input_lower or "checkout" in input_lower:
+             # NEW: Process explicit product mention in the buy command
+             # This fixes the issue where clicking a product sends "I want to buy X" but the agent ignores X
+             # and uses the stale product from the last search context.
+             
+             products = await db.get_products()
+             product_names = [p.name for p in products]
+             
+             # Use token_set_ratio to handle "I want to buy [Product Name]"
+             # This is safer than partial_ratio for short words like "it" matching inside "White"
+             best_match = process.extractOne(input_text, product_names, scorer=fuzz.token_set_ratio)
+             
+             if best_match and best_match[1] > 80:
+                 # Check if the match is better than a generic fallback
+                 target_name = best_match[0]
+                 matched_product = next((p for p in products if p.name == target_name), None)
+                 
+                 # Only update if we found a valid product and the score is high
+                 if matched_product:
+                     print(f"DEBUG: PaymentAgent found explicit product '{target_name}' in input (score={best_match[1]})")
+                     context["last_product_id"] = matched_product.id
+                     context["last_product_name"] = matched_product.name
+
              # Fetch product details if available in context
              product_context = None
              if context.get("last_product_id"):
-                 products = await db.get_products()
+                 # products already fetched above
                  pid = context.get("last_product_id")
                  product = next((p for p in products if p.id == pid), None)
                  if product:
